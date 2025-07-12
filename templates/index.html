@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>混凝土质量缺陷检测平台</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-blue: rgba(0, 123, 255, 0.7);
+            --neon-blue: rgba(0, 195, 255, 0.8);
+            --dark-bg: rgba(15, 23, 42, 0.85);
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --border-color: rgba(64, 158, 255, 0.3);
+        }
+
+        body {
+            background:
+                radial-gradient(circle at center, rgba(8, 22, 48, 0.9) 0%, rgba(4, 12, 24, 0.95) 100%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23081424"/><path d="M0 100 L200 100 M100 0 L100 200" stroke="%230d2b50" stroke-width="0.5"/><circle cx="100" cy="100" r="30" stroke="%230d2b50" stroke-width="0.5" fill="none"/><circle cx="100" cy="100" r="60" stroke="%230d2b50" stroke-width="0.5" fill="none"/></svg>');
+            background-size: cover;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 科技感装饰元素 */
+        .tech-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                linear-gradient(rgba(64, 158, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(64, 158, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .tech-pulse {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: var(--neon-blue);
+            box-shadow: 0 0 15px 5px var(--neon-blue);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 0.3; }
+            100% { opacity: 0.7; }
+        }
+
+        /* 左侧项目列表 */
+        #project-sidebar {
+            background: var(--dark-bg);
+            width: 250px;
+            height: 100vh;
+            border-right: 1px solid var(--border-color);
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.2);
+            transition: all 0.3s ease;
+            z-index: 100;
+            overflow-y: auto;
+        }
+
+        #project-sidebar.collapsed {
+            width: 50px;
+        }
+
+        #project-sidebar.collapsed .sidebar-header h5,
+        #project-sidebar.collapsed .project-item span {
+            display: none;
+        }
+
+        .sidebar-header {
+            padding: 15px 10px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .project-item {
+            padding: 12px 10px;
+            border-bottom: 1px solid rgba(64, 158, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+        }
+
+        .project-item:hover {
+            background: rgba(30, 64, 128, 0.5);
+        }
+
+        .project-item.active {
+            background: rgba(30, 64, 128, 0.8);
+            border-left: 3px solid var(--neon-blue);
+        }
+
+        .project-item i {
+            margin-right: 8px;
+            min-width: 20px;
+        }
+
+        /* 主内容区域 */
+        #main-content {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            padding-left: 50px;
+            transition: padding-left 0.3s ease;
+        }
+
+        #main-content.expanded {
+            padding-left: 250px;
+        }
+
+        /* 主标题区域 */
+        .main-header {
+            background: var(--dark-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 5px 20px;
+            text-align: center;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .main-header h1 {
+            font-size: 1.5rem;
+            margin: 0;
+            background: linear-gradient(90deg, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
+        }
+
+        /* 主体三列布局 */
+        .dashboard-container {
+            display: flex;
+            flex: 1;
+            padding: 10px;
+            gap: 10px;
+            overflow: hidden;
+        }
+
+        .dashboard-column {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        /* 左侧列 */
+        .left-column {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        /* 中间列 */
+        .middle-column {
+            flex: 1.5;
+            min-width: 400px;
+        }
+
+        /* 右侧列 */
+        .right-column {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        /* 通用卡片样式 */
+        .dashboard-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .dashboard-card:hover {
+            box-shadow: 0 0 15px rgba(64, 158, 255, 0.5);
+        }
+
+        .card-header {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            background: rgba(15, 23, 42, 0.5);
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .card-header i {
+            margin-right: 8px;
+            color: #4cc9f0;
+        }
+
+        .card-body {
+            padding: 10px;
+        }
+
+        /* 项目信息样式 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+        }
+
+        .info-item {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        /* 病害分布图 */
+        .distribution-container {
+            display: flex;
+            height: 100%;
+        }
+
+        .chart-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 150px; /* 固定高度 */
+        }
+
+        .distribution-list {
+            flex: 1;
+            padding: 5px;
+            font-size: 0.85rem;
+        }
+
+        .distribution-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(64, 158, 255, 0.1);
+        }
+
+        /* 中间图片区域 */
+        .defect-image-container {
+            height: 55%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .defect-image {
+            max-width: 95%;
+            max-height: 95%;
+            object-fit: contain;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .defect-records {
+            height: 45%;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .defect-records h6 {
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .record-item {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            background: rgba(15, 23, 42, 0.4);
+            font-size: 0.85rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .record-item > div {
+            display: flex;
+            align-items: center;
+        }
+
+        .record-item i {
+            margin-right: 5px;
+            color: #4cc9f0;
+            width: 16px;
+            text-align: center;
+        }
+
+        /* 右侧病害概况 */
+        .defect-type-item {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .defect-type-item:hover {
+            background: rgba(30, 64, 128, 0.5);
+        }
+
+        .defect-type-item.active {
+            background: rgba(30, 64, 128, 0.8);
+            border-left: 3px solid var(--neon-blue);
+        }
+
+        .defect-count {
+            background: var(--primary-blue);
+            border-radius: 12px;
+            padding: 2px 8px;
+            font-size: 0.8rem;
+        }
+
+        /* 高发区域图表 */
+        .bar-chart-container {
+            height: 100%;
+            padding: 10px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            color: #e2e8f0;
+            border-radius: 4px;
+            padding: 2px 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+        }
+
+        .toggle-btn:hover {
+            background: rgba(64, 158, 255, 0.2);
+        }
+
+        /* 自定义滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-blue);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 123, 255, 0.9);
+        }
+    </style>
+</head>
+<body>
+    <!-- 科技感装饰 -->
+    <div class="tech-grid"></div>
+    <div class="tech-pulse"></div>
+
+    <div class="d-flex">
+        <!-- 左侧项目列表 -->
+        <div id="project-sidebar">
+            <div class="sidebar-header">
+                <h5 class="mb-0"><i class="fas fa-project-diagram"></i> <span>项目列表</span></h5>
+                <button id="toggleSidebar" class="toggle-btn">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+            <div id="project-list">
+                <!-- 项目列表将通过JS动态生成 -->
+            </div>
+        </div>
+
+        <!-- 主内容区域 -->
+        <div id="main-content" class="flex-grow-1">
+            <!-- 主标题 -->
+            <div class="main-header">
+                <h1><i class="fas fa-hard-hat"></i> 混凝土质量缺陷检测平台</h1>
+            </div>
+
+            <!-- 主体三列布局 -->
+            <div class="dashboard-container">
+                <!-- 左侧列 -->
+                <div class="dashboard-column left-column">
+                    <!-- 项目概况 -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <i class="fas fa-info-circle"></i> 项目概况
+                        </div>
+                        <div class="card-body">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">项目名称</div>
+                                    <div class="info-value" id="project-name">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">施工单位</div>
+                                    <div class="info-value" id="construction-unit">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">建筑面积 (m²)</div>
+                                    <div class="info-value" id="building-area">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">总工期 (天)</div>
+                                    <div class="info-value" id="project-duration">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 巡检概况 -->
+                    <div class="dashboard-card">
+                        <div class="card-header">
+                            <i class="fas fa-clipboard-check"></i> 巡检概况
+                        </div>
+                        <div class="card-body">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <div class="info-label">巡检面积 (m²)</div>
+                                    <div class="info-value" id="inspection-area">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">巡检时间</div>
+                                    <div class="info-value" id="inspection-time">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">巡检照片总数</div>
+                                    <div class="info-value" id="total-photos">-</div>
+                                </div>
+                                <div class="info-item">
+                                    <div class="info-label">病害照片总数</div>
+                                    <div class="info-value" id="defect-photos">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 病害分布占比 -->
+                    <div class="dashboard-card" style="flex: 1; display: flex; flex-direction: column;">
+                        <div class="card-header">
+                            <i class="fas fa-chart-pie"></i> 病害分布占比
+                        </div>
+                        <div class="card-body" style="flex: 1; display: flex; padding: 5px;">
+                            <div class="distribution-container">
+                                <div class="chart-container">
+                                    <canvas id="defect-distribution-chart"></canvas>
+                                </div>
+                                <div class="distribution-list" id="defect-distribution-list">
+                                    <!-- 病害分布列表将通过JS动态生成 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 中间列 -->
+                <div class="dashboard-column middle-column">
+                    <div class="dashboard-card" style="height: 100%;">
+                        <div class="card-header">
+                            <i class="fas fa-image"></i> 病害图像
+                        </div>
+                        <div class="defect-image-container">
+                            <img id="defect-image" class="defect-image" src="https://images.unsplash.com/photo-1543857778-c4a1a569e7bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="病害图像">
+                        </div>
+                        <div class="defect-records">
+                            <h6><i class="fas fa-list"></i> 发现记录</h6>
+                            <div id="defect-records-list">
+                                <!-- 病害记录将通过JS动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧列 -->
+                <div class="dashboard-column right-column">
+                    <!-- 病害概况 -->
+                    <div class="dashboard-card" style="flex: 1.2;">
+                        <div class="card-header">
+                            <i class="fas fa-bug"></i> 病害概况
+                        </div>
+                        <div class="card-body">
+                            <div id="defect-types-list">
+                                <!-- 病害类型列表将通过JS动态生成 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 病害高发区域 -->
+                    <div class="dashboard-card" style="flex: 0.8;">
+                        <div class="card-header">
+                            <i class="fas fa-map-marked-alt"></i> 病害高发区域
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            <div class="bar-chart-container">
+                                <canvas id="high-frequency-chart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 虚拟数据
+        const projects = [
+            {
+                id: 1,
+                name: "京沪高铁桥梁工程",
+                constructionUnit: "中铁四局集团",
+                buildingArea: "125,600",
+                duration: "360",
+                inspectionArea: "98,500",
+                inspectionTime: "2023-06-15",
+                totalPhotos: 2450,
+                defectPhotos: 320,
+                defectDistribution: [
+                    { type: "裂缝", percentage: 45, color: "#FF6384" },
+                    { type: "蜂窝麻面", percentage: 25, color: "#36A2EB" },
+                    { type: "露筋", percentage: 15, color: "#FFCE56" },
+                    { type: "孔洞", percentage: 8, color: "#4BC0C0" },
+                    { type: "其他", percentage: 7, color: "#9966FF" }
+                ],
+                defects: [
+                    {
+                        id: 101,
+                        type: "裂缝",
+                        count: 142,
+                        image: "https://images.unsplash.com/photo-1543857778-c4a1a569e7bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        records: [
+                            { id: 1001, location: "3#桥墩", date: "2023-05-12", severity: "中度", inspector: "张工" },
+                            { id: 1002, location: "5#梁板", date: "2023-05-18", severity: "轻度", inspector: "李工" },
+                            { id: 1003, location: "2#桥墩", date: "2023-06-02", severity: "重度", inspector: "王工" },
+                            { id: 1004, location: "7#梁板", date: "2023-06-10", severity: "中度", inspector: "赵工" }
+                        ]
+                    },
+                    {
+                        id: 102,
+                        type: "蜂窝麻面",
+                        count: 78,
+                        image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        records: [
+                            { id: 2001, location: "4#桥墩", date: "2023-05-20", severity: "轻度", inspector: "张工" },
+                            { id: 2002, location: "1#梁板", date: "2023-05-25", severity: "中度", inspector: "李工" }
+                        ]
+                    },
+                    {
+                        id: 103,
+                        type: "露筋",
+                        count: 48,
+                        image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        records: [
+                            { id: 3001, location: "6#桥墩", date: "2023-06-05", severity: "中度", inspector: "王工" },
+                            { id: 3002, location: "3#梁板", date: "2023-06-08", severity: "重度", inspector: "赵工" }
+                        ]
+                    },
+                    {
+                        id: 104,
+                        type: "孔洞",
+                        count: 25,
+                        image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        records: [
+                            { id: 4001, location: "2#桥墩", date: "2023-05-30", severity: "重度", inspector: "张工" }
+                        ]
+                    },
+                    {
+                        id: 105,
+                        type: "其他",
+                        count: 27,
+                        image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        records: [
+                            { id: 5001, location: "5#桥墩", date: "2023-06-12", severity: "轻度", inspector: "李工" }
+                        ]
+                    }
+                ],
+                highFrequencyAreas: [
+                    { area: "", count: 48 },
+                    { area: "5#梁板", count: 42 },
+                    { area: "2#桥墩", count: 38 },
+                    { area: "7#梁板", count: 35 },
+                    { area: "4#桥墩", count: 30 },
+                    { area: "1#梁板", count: 28 },
+                    { area: "6#桥墩", count: 25 }
+                ]
+            },
+            {
+                id: 2,
+                name: "深圳湾跨海大桥",
+                constructionUnit: "中交第二航务工程局",
+                buildingArea: "98,300",
+                duration: "420",
+                inspectionArea: "85,200",
+                inspectionTime: "2023-07-10",
+                totalPhotos: 3120,
+                defectPhotos: 280,
+                defectDistribution: [
+                    { type: "裂缝", percentage: 38, color: "#FF6384" },
+                    { type: "蜂窝麻面", percentage: 32, color: "#36A2EB" },
+                    { type: "露筋", percentage: 18, color: "#FFCE56" },
+                    { type: "孔洞", percentage: 7, color: "#4BC0C0" },
+                    { type: "其他", percentage: 5, color: "#9966FF" }
+                ],
+                defects: [
+                    {
+                        id: 201,
+                        type: "裂缝",
+                        count: 106,
+                        image: "https://images.unsplash.com/photo-1543857778-c4a1a569e7bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        records: [
+                            { id: 6001, location: "主桥墩", date: "2023-06-20", severity: "中度", inspector: "陈工" }
+                        ]
+                    },
+                    {
+                        id: 202,
+                        type: "蜂窝麻面",
+                        count: 89,
+                        image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        records: [
+                            { id: 7001, location: "引桥", date: "2023-06-25", severity: "轻度", inspector: "刘工" }
+                        ]
+                    }
+                ],
+                highFrequencyAreas: [
+                    { area: "主桥墩", count: 65 },
+                    { area: "引桥", count: 52 },
+                    { area: "西侧桥面", count: 48 },
+                    { area: "东侧桥面", count: 42 },
+                    { area: "南桥塔", count: 35 },
+                    { area: "北桥塔", count: 28 },
+                    { area: "锚碇区", count: 10 }
+                ]
+            },
+            {
+                id: 3,
+                name: "上海中心大厦",
+                constructionUnit: "上海建工集团",
+                buildingArea: "432,000",
+                duration: "980",
+                inspectionArea: "385,000",
+                inspectionTime: "2023-08-05",
+                totalPhotos: 5680,
+                defectPhotos: 420,
+                defectDistribution: [
+                    { type: "裂缝", percentage: 40, color: "#FF6384" },
+                    { type: "蜂窝麻面", percentage: 28, color: "#36A2EB" },
+                    { type: "露筋", percentage: 15, color: "#FFCE56" },
+                    { type: "孔洞", percentage: 10, color: "#4BC0C0" },
+                    { type: "其他", percentage: 7, color: "#9966FF" }
+                ],
+                defects: [
+                    {
+                        id: 301,
+                        type: "裂缝",
+                        count: 168,
+                        image: "https://images.unsplash.com/photo-1543857778-c4a1a569e7bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                        records: [
+                            { id: 8001, location: "核心筒", date: "2023-07-22", severity: "中度", inspector: "孙工" }
+                        ]
+                    }
+                ],
+                highFrequencyAreas: [
+                    { area: "核心筒", count: 85 },
+                    { area: "58层梁板", count: 72 },
+                    { area: "32层柱", count: 68 },
+                    { area: "102层", count: 58 },
+                    { area: "地下三层", count: 45 },
+                    { area: "设备层", count: 42 },
+                    { area: "顶层结构", count: 35 }
+                ]
+            }
+        ];
+
+        // 当前选中的项目和病害
+        let currentProjectId = 1;
+        let currentDefectId = 101;
+
+        // 初始化页面
+        $(document).ready(function() {
+            // 初始化项目列表
+            initProjectList();
+
+            // 默认加载第一个项目
+            if (projects.length > 0) {
+                loadProjectData(currentProjectId);
+            }
+
+            // 侧边栏折叠/展开功能
+            $('#toggleSidebar').click(function() {
+                $('#project-sidebar').toggleClass('collapsed');
+                $('#main-content').toggleClass('expanded');
+
+                const icon = $(this).find('i');
+                if ($('#project-sidebar').hasClass('collapsed')) {
+                    icon.removeClass('fa-chevron-left').addClass('fa-chevron-right');
+                } else {
+                    icon.removeClass('fa-chevron-right').addClass('fa-chevron-left');
+                }
+            });
+        });
+
+        // 初始化项目列表
+        function initProjectList() {
+            const projectList = $('#project-list');
+            projectList.empty();
+
+            projects.forEach(project => {
+                const projectItem = $('<div>')
+                    .addClass('project-item')
+                    .attr('data-id', project.id)
+                    .html(`<i class="fas fa-building"></i> <span>${project.name}</span>`)
+                    .click(function() {
+                        $('.project-item').removeClass('active');
+                        $(this).addClass('active');
+                        currentProjectId = project.id;
+                        loadProjectData(project.id);
+                    });
+
+                if (project.id === currentProjectId) {
+                    projectItem.addClass('active');
+                }
+
+                projectList.append(projectItem);
+            });
+        }
+
+        // 加载项目数据
+        function loadProjectData(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+
+            // 更新项目概况
+            $('#project-name').text(project.name);
+            $('#construction-unit').text(project.constructionUnit);
+            $('#building-area').text(project.buildingArea);
+            $('#project-duration').text(project.duration);
+
+            // 更新巡检概况
+            $('#inspection-area').text(project.inspectionArea);
+            $('#inspection-time').text(project.inspectionTime);
+            $('#total-photos').text(project.totalPhotos);
+            $('#defect-photos').text(project.defectPhotos);
+
+            // 更新病害分布图
+            updateDefectDistributionChart(project.defectDistribution);
+
+            // 更新病害分布列表
+            updateDefectDistributionList(project.defectDistribution);
+
+            // 更新病害类型列表
+            updateDefectTypesList(project.defects);
+
+            // 更新病害高发区域图表
+            updateHighFrequencyChart(project.highFrequencyAreas);
+
+            // 默认加载第一个病害
+            if (project.defects.length > 0) {
+                loadDefectData(project.defects[0].id);
+            }
+        }
+
+        // 更新病害分布图表
+        function updateDefectDistributionChart(distribution) {
+            const ctx = $('#defect-distribution-chart');
+            const labels = distribution.map(item => item.type);
+            const data = distribution.map(item => item.percentage);
+            const colors = distribution.map(item => item.color);
+
+            if (window.defectDistributionChart) {
+                window.defectDistributionChart.destroy();
+            }
+
+            window.defectDistributionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: 'rgba(15, 23, 42, 0.8)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    cutout: '60%',
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}: ${context.parsed}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // 更新病害分布列表
+        function updateDefectDistributionList(distribution) {
+            const list = $('#defect-distribution-list');
+            list.empty();
+
+            distribution.forEach(item => {
+                const itemElement = $('<div>').addClass('distribution-item');
+                const colorBox = $('<span>').css({
+                    'display': 'inline-block',
+                    'width': '10px',
+                    'height': '10px',
+                    'background': item.color,
+                    'margin-right': '6px',
+                    'border-radius': '2px'
+                });
+
+                itemElement.append(
+                    $('<div>').append(
+                        colorBox,
+                        $('<span>').text(item.type)
+                    ),
+                    $('<span>').text(`${item.percentage}%`)
+                );
+
+                list.append(itemElement);
+            });
+        }
+
+        // 更新病害类型列表
+        function updateDefectTypesList(defects) {
+            const list = $('#defect-types-list');
+            list.empty();
+
+            defects.forEach(defect => {
+                const item = $('<div>')
+                    .addClass('defect-type-item')
+                    .attr('data-id', defect.id)
+                    .html(`
+                        <div>
+                            <i class="fas fa-circle-notch"></i> ${defect.type}
+                        </div>
+                        <div class="defect-count">${defect.count}</div>
+                    `)
+                    .click(function() {
+                        $('.defect-type-item').removeClass('active');
+                        $(this).addClass('active');
+                        loadDefectData(defect.id);
+                    });
+
+                if (defect.id === currentDefectId) {
+                    item.addClass('active');
+                }
+
+                list.append(item);
+            });
+        }
+
+        // 加载病害数据
+        function loadDefectData(defectId) {
+            currentDefectId = defectId;
+
+            // 查找当前项目的当前病害
+            const project = projects.find(p => p.id === currentProjectId);
+            if (!project) return;
+
+            const defect = project.defects.find(d => d.id === defectId);
+            if (!defect) return;
+
+            // 更新病害图像
+            $('#defect-image').attr('src', defect.image);
+
+            // 更新病害记录
+            updateDefectRecords(defect.records);
+        }
+
+        // 更新病害记录
+        function updateDefectRecords(records) {
+            const list = $('#defect-records-list');
+            list.empty();
+
+            records.forEach(record => {
+                const severityClass = record.severity === '轻度' ? 'text-info' :
+                                    record.severity === '中度' ? 'text-warning' : 'text-danger';
+
+                const recordElement = $('<div>').addClass('record-item').html(`
+                    <div><i class="fas fa-hashtag"></i> ID: ${record.id}</div>
+                    <div><i class="fas fa-map-marker-alt"></i> ${record.location}</div>
+                    <div><i class="fas fa-calendar-alt"></i> ${record.date}</div>
+                    <div><i class="fas fa-user-hard-hat"></i> ${record.inspector}</div>
+                    <div><i class="fas fa-exclamation-triangle"></i> <span class="${severityClass}">${record.severity}</span></div>
+                `);
+
+                list.append(recordElement);
+            });
+        }
+
+        // 更新病害高发区域图表
+        function updateHighFrequencyChart(areas) {
+            const ctx = $('#high-frequency-chart');
+            const labels = areas.map(item => item.area);
+            const data = areas.map(item => item.count);
+
+            if (window.highFrequencyChart) {
+                window.highFrequencyChart.destroy();
+            }
+
+            window.highFrequencyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '病害数量',
+                        data: data,
+                        backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(64, 158, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(64, 158, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#94a3b8',
+                                font: {
+                                    size: 10
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
