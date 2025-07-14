@@ -1,309 +1,391 @@
 :root {
-    --primary-color: rgba(30, 58, 138, 0.85);
-    --secondary-color: rgba(30, 64, 175, 0.7);
-    --accent-color: rgba(56, 189, 248, 0.7);
-    --text-light: #e5e7eb;
-    --dark-bg: rgba(15, 23, 42, 0.95);
-    --card-bg: rgba(30, 41, 59, 0.8);
-    --card-border: rgba(56, 189, 248, 0.3);
+    --primary-blue: rgba(0, 123, 255, 0.7);
+    --neon-blue: rgba(0, 195, 255, 0.8);
+    --dark-bg: rgba(15, 23, 42, 0.85);
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --border-color: rgba(64, 158, 255, 0.3);
 }
 
 body {
-    background: linear-gradient(rgba(15, 23, 42, 0.95), url("https://img.zcool.cn/community/01e7a65f8a2b1511013f4720f8b1d9.jpg")) no-repeat center center fixed;
+    background:
+        radial-gradient(circle at center, rgba(8, 22, 48, 0.9) 0%, rgba(4, 12, 24, 0.95) 100%),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><rect width="200" height="200" fill="%23081424"/><path d="M0 100 L200 100 M100 0 L100 200" stroke="%230d2b50" stroke-width="0.5"/><circle cx="100" cy="100" r="30" stroke="%230d2b50" stroke-width="0.5" fill="none"/><circle cx="100" cy="100" r="60" stroke="%230d2b50" stroke-width="0.5" fill="none"/></svg>');
     background-size: cover;
-    color: var(--text-light);
-    font-family: 'Microsoft YaHei', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-    font-size: 14px;
+    color: #e2e8f0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* 科技感装饰元素 */
+.tech-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image:
+        linear-gradient(rgba(64, 158, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(64, 158, 255, 0.05) 1px, transparent 1px);
+    background-size: 30px 30px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.tech-pulse {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background: var(--neon-blue);
+    box-shadow: 0 0 15px 5px var(--neon-blue);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 0.3; }
+    100% { opacity: 0.7; }
 }
 
 /* 左侧项目列表 */
 #project-sidebar {
     background: var(--dark-bg);
+    width: 250px;
     height: 100vh;
-    position: fixed;
-    width: 240px;
-    z-index: 1000;
-    box-shadow: 3px 0 15px rgba(0, 0, 0, 0.5);
+    border-right: 1px solid var(--border-color);
+    box-shadow: 0 0 15px rgba(0, 123, 255, 0.2);
     transition: all 0.3s ease;
+    z-index: 100;
     overflow-y: auto;
 }
 
 #project-sidebar.collapsed {
-    transform: translateX(-210px);
+    width: 50px;
 }
 
-.sidebar-toggle {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background: var(--primary-color);
-    border: none;
-    color: var(--text-light);
-    border-radius: 4px;
-    padding: 3px 8px;
-    z-index: 1001;
-    font-size: 12px;
+#project-sidebar.collapsed .sidebar-header h5,
+#project-sidebar.collapsed .project-item span {
+    display: none;
 }
 
-.project-item {
-    padding: 10px 15px;
-    border-bottom: 1px solid rgba(56, 189, 248, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    font-size: 13px;
-}
-
-.project-item:hover {
-    background: rgba(56, 189, 248, 0.15);
-}
-
-.project-item.active {
-    background: rgba(56, 189, 248, 0.25);
-    border-left: 3px solid var(--accent-color);
-}
-
-/* 主体内容 */
-#main-content {
-    margin-left: 240px;
-    padding: 15px;
-    transition: all 0.3s ease;
-}
-
-#main-content.expanded {
-    margin-left: 30px;
-}
-
-.dashboard-header {
-    background: var(--primary-color);
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    border-bottom: 2px solid var(--accent-color);
-}
-
-.dashboard-header h2 {
-    font-weight: 700;
-    letter-spacing: 0.5px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-    font-size: 1.5rem;
-    margin-bottom: 5px;
-}
-
-.dashboard-header p {
-    opacity: 0.9;
-    font-size: 0.9rem;
-    margin-bottom: 0;
-}
-
-.badge {
-    font-weight: 500;
-    padding: 4px 8px;
-    font-size: 0.8rem;
-}
-
-/* 卡片样式 */
-.dashboard-card {
-    background: var(--card-bg);
-    border-radius: 6px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--card-border);
-    backdrop-filter: blur(5px);
-    transition: all 0.3s ease;
-    height: auto;
-}
-
-.dashboard-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-.card-header {
-    color: var(--text-light);
-    padding-bottom: 10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid var(--accent-color);
-    position: relative;
-    font-weight: 600;
-    font-size: 1rem;
-    letter-spacing: 0.5px;
-}
-
-.card-header::after {
-    content: '';
-    position: absolute;
-    bottom: -1px;
-    left: 0;
-    width: 80px;
-    height: 2px;
-    background: linear-gradient(90deg, var(--accent-color), transparent);
-}
-
-/* 图表容器 */
-.chart-container {
-    position: relative;
-    height: 200px;
-    width: 100%;
-}
-
-/* 病害图像卡片 */
-.image-card {
-    background: var(--card-bg);
-    border-radius: 6px;
-    padding: 12px;
-    height: 100%;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    border: 1px solid var(--card-border);
-    backdrop-filter: blur(5px);
-}
-
-.damage-image {
-    width: 100%;
-    border-radius: 6px;
-    margin-bottom: 10px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-    height: 280px;
-    object-fit: cover;
-}
-
-.damage-info {
-    background: rgba(30, 41, 59, 0.6);
-    border-radius: 6px;
-    padding: 10px;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
-}
-
-/* 统计卡片 */
-.stat-card {
-    background: rgba(30, 41, 59, 0.6);
-    border-radius: 6px;
-    padding: 8px;
-    margin-bottom: 10px;
-    border-left: 3px solid var(--accent-color);
-    text-align: center;
-}
-
-.stat-value {
-    font-size: 1.3rem;
-    font-weight: 700;
-    color: var(--accent-color);
-    margin-bottom: 2px;
-}
-
-.stat-label {
-    font-size: 0.8rem;
-    opacity: 0.8;
-}
-
-/* 进度条 */
-.progress-container {
-    margin-top: 10px;
-}
-
-.progress {
-    height: 10px;
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-.progress-bar {
-    background-color: var(--accent-color);
-}
-
-/* 缺陷项目 */
-.defect-item {
-    padding: 8px 10px;
-    border-radius: 4px;
-    margin-bottom: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    background: rgba(30, 41, 59, 0.6);
-    border-left: 3px solid transparent;
-}
-
-.defect-item:hover {
-    background: rgba(56, 189, 248, 0.15);
-}
-
-.defect-item.active {
-    background: rgba(56, 189, 248, 0.25);
-    border-left: 3px solid var(--accent-color);
-}
-
-/* 地图容器 */
-.map-container {
-    height: 180px;
-    background: rgba(30, 41, 59, 0.6);
-    border-radius: 6px;
-    overflow: hidden;
-    position: relative;
-}
-
-.map-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(30, 58, 138, 0.4), rgba(15, 23, 42, 0.7));
+.sidebar-header {
+    padding: 15px 10px;
+    border-bottom: 1px solid var(--border-color);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
 }
 
-.map-overlay i {
-    font-size: 2rem;
-    color: rgba(56, 189, 248, 0.5);
+.project-item {
+    padding: 12px 10px;
+    border-bottom: 1px solid rgba(64, 158, 255, 0.1);
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
 }
 
-/* 预警项目 */
-.alert-item {
-    background: rgba(255, 100, 100, 0.2);
+.project-item:hover {
+    background: rgba(30, 64, 128, 0.5);
+}
+
+.project-item.active {
+    background: rgba(30, 64, 128, 0.8);
+    border-left: 3px solid var(--neon-blue);
+}
+
+#project-sidebar {
+    /* 添加固定定位 */
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+#main-content {
+    /* 使用margin-left代替padding-left */
+    margin-left: 250px;
+    width: calc(100% - 250px);
+    transition: margin-left 0.3s ease;
+}
+
+#main-content.expanded {
+    margin-left: 50px;
+    width: calc(100% - 50px);
+}
+
+/* 主标题区域 */
+.main-header {
+    background: var(--dark-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 5px 20px;
+    text-align: center;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.main-header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    background: linear-gradient(90deg, #4cc9f0, #4361ee);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+    text-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
+}
+
+/* 主体三列布局 */
+.dashboard-container {
+    display: flex;
+    flex: 1;
+    padding: 10px;
+    gap: 10px;
+    overflow: hidden;
+}
+
+.dashboard-column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* 左侧列 */
+.left-column {
+    flex: 1;
+    min-width: 280px;
+}
+
+/* 中间列 */
+.middle-column {
+    flex: 1.5;
+    min-width: 400px;
+}
+
+/* 右侧列 */
+.right-column {
+    flex: 1;
+    min-width: 280px;
+}
+
+/* 通用卡片样式 */
+.dashboard-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.dashboard-card:hover {
+    box-shadow: 0 0 15px rgba(64, 158, 255, 0.5);
+}
+
+.card-header {
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+    background: rgba(15, 23, 42, 0.5);
+    display: flex;
+    align-items: center;
+    font-size: 0.95rem;
+}
+
+.card-header i {
+    margin-right: 8px;
+    color: #4cc9f0;
+}
+
+.card-body {
+    padding: 10px;
+}
+
+/* 项目信息样式 */
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.info-item {
     padding: 8px;
-    border-left: 3px solid #ff6b6b;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
 }
 
-/* 动画效果 */
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.02); }
-    100% { transform: scale(1); }
+.info-label {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    margin-bottom: 3px;
 }
 
-.pulse {
-    animation: pulse 2s infinite;
+.info-value {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e2e8f0;
 }
 
-/* 响应式调整 */
-@media (max-width: 992px) {
-    #project-sidebar {
-        width: 220px;
-    }
-
-    #project-sidebar.collapsed {
-        transform: translateX(-190px);
-    }
-
-    #main-content {
-        margin-left: 220px;
-    }
+/* 病害分布图 */
+.distribution-container {
+    display: flex;
+    height: 100%;
 }
 
-@media (max-width: 768px) {
-    #project-sidebar {
-        width: 200px;
-    }
+.chart-container {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 150px; /* 固定高度 */
+}
 
-    #project-sidebar.collapsed {
-        transform: translateX(-170px);
-    }
+.distribution-list {
+    flex: 1;
+    padding: 5px;
+    font-size: 0.85rem;
+}
 
-    #main-content {
-        margin-left: 200px;
-    }
+.distribution-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid rgba(64, 158, 255, 0.1);
+}
+
+/* 中间图片区域 */
+.defect-image-container {
+    height: 55%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.defect-image {
+    max-width: 95%;
+    max-height: 95%;
+    object-fit: contain;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+.defect-records {
+    height: 45%;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.defect-records h6 {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.record-item {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    background: rgba(15, 23, 42, 0.4);
+    font-size: 0.85rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.record-item > div {
+    display: flex;
+    align-items: center;
+}
+
+.record-item i {
+    margin-right: 5px;
+    color: #4cc9f0;
+    width: 16px;
+    text-align: center;
+}
+
+/* 右侧病害概况 */
+.defect-type-item {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.defect-type-item:hover {
+    background: rgba(30, 64, 128, 0.5);
+}
+
+.defect-type-item.active {
+    background: rgba(30, 64, 128, 0.8);
+    border-left: 3px solid var(--neon-blue);
+}
+
+.defect-count {
+    background: var(--primary-blue);
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+}
+
+/* 高发区域图表 */
+.bar-chart-container {
+    height: 100%;
+    padding: 10px;
+}
+
+.toggle-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    color: #e2e8f0;
+    border-radius: 4px;
+    padding: 2px 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+}
+
+.toggle-btn:hover {
+    background: rgba(64, 158, 255, 0.2);
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-blue);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 123, 255, 0.9);
 }
