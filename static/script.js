@@ -1,249 +1,454 @@
-// 缺陷数据
-const defectsData = {
-    hole: {
-        name: "孔洞",
-        severity: "严重",
-        confidence: "92%",
-        date: "2023-07-10 10:25",
-        location: "北京地铁15号线工程 - 第3施工段",
-        size: "25×18mm",
-        depth: "8mm",
-        position: "侧墙",
-        image: "https://img.zcool.cn/community/01d5d85f8a2b1511013f4720d8c86e.jpg",
-        suggestion: "使用环氧树脂砂浆进行修补，修补前需清理孔洞周边松散混凝土，修补后需进行防水处理。"
-    },
-    crack: {
-        name: "裂缝",
-        severity: "中等",
-        confidence: "88%",
-        date: "2023-07-10 11:30",
-        location: "北京地铁15号线工程 - 第2施工段",
-        size: "长120mm",
-        depth: "3mm",
-        position: "顶板",
-        image: "https://img.zcool.cn/community/01f0d75f8a2b1511013f4720a8a2d8.jpg",
-        suggestion: "采用压力灌浆法注入环氧树脂胶，裂缝宽度大于0.3mm时需开槽处理后再注胶。"
-    },
-    honeycomb: {
-        name: "蜂窝",
-        severity: "中等",
-        confidence: "85%",
-        date: "2023-07-09 14:15",
-        location: "北京地铁15号线工程 - 第1施工段",
-        size: "150×200mm",
-        depth: "15mm",
-        position: "柱",
-        image: "https://img.zcool.cn/community/01d9c85f8a2b1511013f4720f8b1d9.jpg",
-        suggestion: "清除松散颗粒，用高强度水泥砂浆分层填补并压实，养护不少于7天。"
-    },
-    segregation: {
-        name: "离析",
-        severity: "低",
-        confidence: "78%",
-        date: "2023-07-08 09:45",
-        location: "北京地铁15号线工程 - 第4施工段",
-        size: "区域2㎡",
-        depth: "表层",
-        position: "底板",
-        image: "https://img.zcool.cn/community/01f8e75f8a2b1511013f4720a8a2d8.jpg",
-        suggestion: "对离析区域进行凿除处理，重新浇筑混凝土，加强振捣工艺控制。"
-    },
-    leakage: {
-        name: "渗漏",
-        severity: "严重",
-        confidence: "91%",
-        date: "2023-07-10 14:20",
-        location: "北京地铁15号线工程 - 第3施工段",
-        size: "渗漏点3处",
-        depth: "贯穿",
-        position: "侧墙",
-        image: "https://img.zcool.cn/community/01d5d85f8a2b1511013f4720d8c86e.jpg",
-        suggestion: "查找水源点，采用化学灌浆止水，表面涂刷防水涂料，设置导流槽。"
-    },
-    void: {
-        name: "空鼓",
-        severity: "低",
-        confidence: "76%",
-        date: "2023-07-07 16:10",
-        location: "北京地铁15号线工程 - 第2施工段",
-        size: "直径50-80mm",
-        depth: "表层",
-        position: "顶板",
-        image: "https://img.zcool.cn/community/01f8e75f8a2b1511013f4720a8a2d8.jpg",
-        suggestion: "钻孔注入环氧树脂，表面打磨平整，空鼓面积大于400cm²需凿除重做。"
+// 虚拟数据
+const projects = [
+    {
+        id: 1,
+        name: "京沪高铁桥梁工程",
+        constructionUnit: "中铁四局集团",
+        buildingArea: "125,600",
+        duration: "360",
+        inspectionArea: "98,500",
+        inspectionTime: "2023-06-15",
+        totalPhotos: 2450,
+        defectPhotos: 320,
+        defectDistribution: [
+            { type: "露筋", percentage: 45, color: "#FF6384" },
+            { type: "缺棱掉角", percentage: 25, color: "#36A2EB" },
+            { type: "夹渣", percentage: 15, color: "#FFA2AB" },
+            { type: "裂渗", percentage: 8, color: "#4BC0C0" },
+            { type: "连接缺陷", percentage: 7, color: "#9966FF" },
+            { type: "孔洞类缺陷", percentage: 13, color: "#8296A8"}
+        ],
+        defects: [
+            {
+                id: 101,
+                type: "露筋",
+                count: 142,
+                image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                records: [
+                    { id: 1001, location: "桥墩", date: "2023-05-12", imageName: "defect-1001.jpg" },
+                    { id: 1002, location: "梁板", date: "2023-05-18", imageName: "defect-1002.jpg" },
+                    { id: 1003, location: "桥墩", date: "2023-06-02", imageName: "defect-1003.jpg" },
+                    { id: 1004, location: "梁板", date: "2023-06-10", imageName: "defect-1004.jpg" },
+                    { id: 1001, location: "桥墩", date: "2023-05-12", imageName: "defect-1001.jpg" },
+                    { id: 1002, location: "梁板", date: "2023-05-18", imageName: "defect-1002.jpg" },
+                    { id: 1003, location: "桥墩", date: "2023-06-02", imageName: "defect-1003.jpg" },
+                    { id: 1004, location: "梁板", date: "2023-06-10", imageName: "defect-1004.jpg" }
+                ]
+            },
+            {
+                id: 102,
+                type: "缺棱掉角",
+                count: 78,
+                image: "https://images.unsplash.com/photo-1581091226033-d5c48150dbaa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                records: [
+                    { id: 2001, location: "桥墩", date: "2023-05-20", imageName: "defect-2001.jpg" },
+                    { id: 2002, location: "梁板", date: "2023-05-25", imageName: "defect-2002.jpg" }
+                ]
+            },
+            {
+                id: 103,
+                type: "夹渣",
+                count: 48,
+                image: "https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                records: [
+                    { id: 3001, location: "桥墩", date: "2023-06-05", imageName: "defect-3001.jpg" },
+                    { id: 3002, location: "梁板", date: "2023-06-08", imageName: "defect-3002.jpg" }
+                ]
+            },
+            {
+                id: 104,
+                type: "裂渗",
+                count: 25,
+                image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                records: [
+                    { id: 4001, location: "桥墩", date: "2023-05-30", imageName: "defect-4001.jpg" }
+                ]
+            },
+            {
+                id: 105,
+                type: "连接缺陷",
+                count: 27,
+                image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                records: [
+                    { id: 5001, location: "桥墩", date: "2023-06-12", imageName: "defect-5001.jpg" }
+                ]
+            },
+            {
+                id: 106,
+                type: "孔洞类缺陷",
+                count: 0,
+                image: "https://images.unsplash.com/photo-1581092580497-e0d23cbdf1dc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                records: []
+            }
+        ],
+        highFrequencyAreas: [
+            { area: "主桥墩", count: 65 },
+            { area: "引桥", count: 52 },
+            { area: "西侧桥面", count: 48 },
+            { area: "东侧桥面", count: 42 },
+            { area: "南桥塔", count: 35 },
+            { area: "北桥塔", count: 28 },
+            { area: "锚碇区", count: 10 }
+        ]
     }
-};
+];
 
+// 当前选中的项目和病害
+let currentProjectId = 1;
+let currentDefectId = 101;
+
+// 全局变量
+let currentCarouselInterval = null;
+let currentHighlightedRecord = null;
+let isCarouselRunning = true;
+
+// 初始化页面
 $(document).ready(function() {
-    // 左侧面板折叠功能
-    $('.sidebar-toggle').click(function() {
+    initProjectList();
+
+    if (projects.length > 0) {
+        loadProjectData(currentProjectId);
+    }
+
+    $('#toggleSidebar').click(function() {
         $('#project-sidebar').toggleClass('collapsed');
         $('#main-content').toggleClass('expanded');
 
+        const icon = $(this).find('i');
         if ($('#project-sidebar').hasClass('collapsed')) {
-            $(this).html('<i class="fas fa-bars"></i>');
+            icon.removeClass('fa-chevron-left').addClass('fa-chevron-right');
         } else {
-            $(this).html('<i class="fas fa-times"></i>');
+            icon.removeClass('fa-chevron-right').addClass('fa-chevron-left');
         }
+
+        setTimeout(function() {
+            if (window.defectDistributionChart) {
+                window.defectDistributionChart.resize();
+            }
+            if (window.highFrequencyChart) {
+                window.highFrequencyChart.resize();
+            }
+        }, 300);
     });
+});
 
-    // 项目选择功能
-    $('.project-item').click(function() {
-        $('.project-item').removeClass('active');
-        $(this).addClass('active');
-    });
+function initProjectList() {
+    const projectList = $('#project-list');
+    projectList.empty();
 
-    // 缺陷选择功能
-    $('.defect-item').click(function() {
-        $('.defect-item').removeClass('active');
-        $(this).addClass('active');
+    projects.forEach(project => {
+        const projectItem = $('<div>')
+            .addClass('project-item')
+            .attr('data-id', project.id)
+            .html(`<i class="fas fa-building"></i> <span>${project.name}</span>`)
+            .click(function() {
+                $('.project-item').removeClass('active');
+                $(this).addClass('active');
+                currentProjectId = project.id;
+                loadProjectData(project.id);
+            });
 
-        const defectType = $(this).data('type');
-        updateDefectDisplay(defectType);
-    });
-
-    // 更新缺陷显示
-    function updateDefectDisplay(type) {
-        const defect = defectsData[type];
-
-        $('#defect-image').attr('src', defect.image);
-        $('#severity-badge').text(defect.severity);
-        $('#defect-type').text(`${defect.name} (置信度 ${defect.confidence})`);
-        $('#detection-date').text(defect.date);
-        $('#location').text(defect.location);
-        $('#defect-size').text(defect.size);
-        $('#defect-depth').text(defect.depth);
-        $('#defect-position').text(defect.position);
-        $('#repair-suggestion').text(defect.suggestion);
-
-        // 根据严重程度更新徽章颜色
-        const badge = $('#severity-badge');
-        badge.removeClass('bg-danger bg-warning bg-info');
-
-        if (defect.severity === '严重') {
-            badge.addClass('bg-danger');
-        } else if (defect.severity === '中等') {
-            badge.addClass('bg-warning');
-        } else {
-            badge.addClass('bg-info');
+        if (project.id === currentProjectId) {
+            projectItem.addClass('active');
         }
+
+        projectList.append(projectItem);
+    });
+}
+
+function loadProjectData(projectId) {
+    const project = projects.find(p => p.id === projectId);
+    if (!project) return;
+
+    $('#project-name').text(project.name);
+    $('#construction-unit').text(project.constructionUnit);
+    $('#building-area').text(project.buildingArea);
+    $('#project-duration').text(project.duration);
+
+    $('#inspection-area').text(project.inspectionArea);
+    $('#inspection-time').text(project.inspectionTime);
+    $('#total-photos').text(project.totalPhotos);
+    $('#defect-photos').text(project.defectPhotos);
+
+    updateDefectDistributionChart(project.defectDistribution);
+
+    const allDefectTypes = project.defectDistribution.map(item => item.type);
+    updateDefectTypesList(project.defects, allDefectTypes);
+
+    updateHighFrequencyChart(project.highFrequencyAreas);
+
+    if (project.defects.length > 0 && project.defects[0].count > 0) {
+        loadDefectData(project.defects[0].id);
+    } else {
+        loadAllDefectRecords();
+    }
+}
+
+function updateDefectDistributionChart(distribution) {
+    const ctx = $('#defect-distribution-chart');
+    const labels = distribution.map(item => item.type);
+    const data = distribution.map(item => item.percentage);
+    const colors = distribution.map(item => item.color);
+
+    if (window.defectDistributionChart) {
+        window.defectDistributionChart.destroy();
     }
 
-    // 初始化巡检图表
-    const inspectionCtx = document.getElementById('inspectionChart').getContext('2d');
-    const inspectionChart = new Chart(inspectionCtx, {
-        type: 'line',
+    window.defectDistributionChart = new Chart(ctx, {
+        type: 'doughnut',
         data: {
-            labels: ['6月', '7月', '8月', '9月', '10月', '11月'],
+            labels: labels,
             datasets: [{
-                label: '巡检次数',
-                data: [12, 28, 38, 35, 42, 40],
-                borderColor: 'rgba(56, 189, 248, 1)',
-                backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                borderWidth: 2,
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: 'rgba(255, 255, 255, 1)',
-                pointBorderColor: 'rgba(56, 189, 248, 1)',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
+                data: data,
+                backgroundColor: colors,
+                borderColor: 'rgba(15, 23, 42, 0.8)',
+                borderWidth: 1
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: false,
+            maintainAspectRatio: true,
+            cutout: '60%',
             plugins: {
                 legend: {
                     display: false
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    },
-                    ticks: {
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        font: {
-                            size: 10
-                        }
-                    }
                 },
-                x: {
-                    grid: {
-                        color: 'rgba(255, 255, 255, 0.1)'
-                    },
-                    ticks: {
-                        color: 'rgba(255, 255, 255, 0.7)',
-                        font: {
-                            size: 10
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.parsed}%`;
                         }
                     }
                 }
             }
         }
     });
+}
 
-    // 初始化缺陷分布图表
-    const damageCtx = document.getElementById('damageDistributionChart').getContext('2d');
-    const damageChart = new Chart(damageCtx, {
-        type: 'doughnut',
+function updateDefectTypesList(defects, allTypes) {
+    const list = $('#defect-types-list');
+    list.empty();
+
+    const totalCount = defects.reduce((sum, defect) => sum + defect.count, 0);
+    const allItem = $('<div>')
+        .addClass('defect-type-item')
+        .attr('data-id', 'all')
+        .html(`
+            <div>
+                <i class="fas fa-circle-notch"></i> 全部
+            </div>
+            <div class="defect-count">${totalCount}</div>
+        `)
+        .click(function() {
+            $('.defect-type-item').removeClass('active');
+            $(this).addClass('active');
+            loadAllDefectRecords();
+        });
+    list.append(allItem);
+
+    allTypes.forEach(type => {
+        const defect = defects.find(d => d.type === type);
+        const count = defect ? defect.count : 0;
+
+        const item = $('<div>')
+            .addClass('defect-type-item')
+            .attr('data-id', type)
+            .html(`
+                <div>
+                    <i class="fas fa-circle-notch"></i> ${type}
+                </div>
+                <div class="defect-count">${count}</div>
+            `)
+            .click(function() {
+                $('.defect-type-item').removeClass('active');
+                $(this).addClass('active');
+                if (defect) {
+                    loadDefectData(defect.id);
+                } else {
+                    $('#defect-records-list').empty();
+                    $('#defect-image').attr('src', '');
+                }
+            });
+
+        if (defect && defect.id === currentDefectId) {
+            item.addClass('active');
+        }
+
+        list.append(item);
+    });
+}
+
+function loadDefectData(defectId) {
+    currentDefectId = defectId;
+
+    const project = projects.find(p => p.id === currentProjectId);
+    if (!project) return;
+
+    const defect = project.defects.find(d => d.id === defectId);
+    if (!defect) return;
+
+    $('#defect-image').attr('src', defect.image);
+
+    const records = defect.records.map(record => ({
+        ...record,
+        defectType: defect.type,
+        imageUrl: defect.image
+    }));
+
+    updateDefectRecords(records);
+}
+
+function updateDefectRecords(records) {
+    const list = $('#defect-records-list');
+    list.empty();
+
+    records.forEach(record => {
+        const recordElement = $('<div>').addClass('record-item').html(`
+            <div>${record.date}</div>
+            <div>${record.location}</div>
+            <div>${record.imageName}</div>
+            <div>${record.defectType}</div>
+        `).data('record', record)
+         .click(function() {
+             if ($(this).hasClass('active')) {
+                 $(this).removeClass('active');
+                 currentHighlightedRecord = null;
+                 startCarousel();
+                 isCarouselRunning = true;
+             } else {
+                 stopCarousel();
+                 $('.record-item').removeClass('active');
+                 $(this).addClass('active');
+                 currentHighlightedRecord = record;
+                 isCarouselRunning = false;
+                 $('#defect-image').attr('src', record.imageUrl);
+             }
+         });
+
+        list.append(recordElement);
+    });
+
+    startCarousel();
+}
+
+function startCarousel() {
+    stopCarousel();
+
+    const records = $('.record-item');
+    if (records.length === 0) return;
+
+    let currentIndex = 0;
+
+    records.eq(currentIndex).addClass('active');
+    $('#defect-image').attr('src', records.eq(currentIndex).data('record').imageUrl);
+
+    currentCarouselInterval = setInterval(() => {
+        records.removeClass('active');
+        currentIndex = (currentIndex + 1) % records.length;
+        records.eq(currentIndex).addClass('active');
+        $('#defect-image').attr('src', records.eq(currentIndex).data('record').imageUrl);
+    }, 3000);
+}
+
+function stopCarousel() {
+    if (currentCarouselInterval) {
+        clearInterval(currentCarouselInterval);
+        currentCarouselInterval = null;
+    }
+}
+
+function loadAllDefectRecords() {
+    const project = projects.find(p => p.id === currentProjectId);
+    if (!project) return;
+
+    let allRecords = [];
+    project.defects.forEach(defect => {
+        defect.records.forEach(record => {
+            allRecords.push({
+                ...record,
+                defectType: defect.type,
+                imageUrl: defect.image,
+                imageName: `${defect.type}-${record.id}.jpg`
+            });
+        });
+    });
+
+    updateDefectRecords(allRecords.slice(0, 5));
+}
+
+function updateHighFrequencyChart(areas) {
+    const ctx = $('#high-frequency-chart');
+    const labels = areas.map(item => item.area);
+    const data = areas.map(item => item.count);
+    const colors = areas.map((_, i) => {
+        const colors = ['#FF6384', '#36A2EB', '#FFA2AB', '#4BC0C0', '#9966FF', '#8296A8', '#FF9F40'];
+        return colors[i % colors.length];
+    });
+
+    if (window.highFrequencyChart) {
+        window.highFrequencyChart.destroy();
+    }
+
+    window.highFrequencyChart = new Chart(ctx, {
+        type: 'bar',
         data: {
-            labels: ['孔洞', '裂缝', '蜂窝', '离析', '渗漏', '空鼓'],
+            labels: labels,
             datasets: [{
-                data: [28, 22, 19, 15, 8, 5],
-                backgroundColor: [
-                    'rgba(56, 189, 248, 0.8)',
-                    'rgba(255, 99, 132, 0.8)',
-                    'rgba(255, 206, 86, 0.8)',
-                    'rgba(75, 192, 192, 0.8)',
-                    'rgba(153, 102, 255, 0.8)',
-                    'rgba(255, 159, 64, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(56, 189, 248, 1)',
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
+                label: '病害数量',
+                data: data,
+                backgroundColor: colors,
+                borderColor: colors.map(color => color.replace('0.7', '1')),
+                borderWidth: 1,
+                borderRadius: 4,
+                borderSkipped: false
             }]
         },
         options: {
+            indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: 'bottom',
-                    labels: {
-                        color: 'rgba(255, 255, 255, 0.8)',
-                        padding: 10,
-                        font: {
-                            size: 10
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `病害数量: ${context.parsed.x}`;
                         }
                     }
                 }
             },
-            cutout: '65%'
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(64, 158, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#94a3b8',
+                        font: {
+                            weight: 'bold'
+                        }
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(64, 158, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#94a3b8',
+                        font: {
+                            size: 10,
+                            weight: 'bold'
+                        }
+                    }
+                }
+            },
+            animation: {
+                duration: 2000,
+                easing: 'easeOutBounce'
+            }
         }
     });
-
-    // // 模拟实时数据更新
-    // setInterval(function() {
-    //     // 更新一些数字
-    //     const randomValue = Math.floor(Math.random() * 3) + 1;
-    //     const statCards = $('.stat-card .stat-value');
-    //     const currentValue = parseInt(statCards.eq(0).text().replace(',', ''));
-    //     statCards.eq(0).text(currentValue + randomValue);
-    //
-    //     // 添加动画效果
-    //     statCards.eq(0).parent().addClass('bg-info');
-    //     setTimeout(() => {
-    //         statCards.eq(0).parent().removeClass('bg-info');
-    //     }, 1000);
-    // }, 5000);
-});
+}

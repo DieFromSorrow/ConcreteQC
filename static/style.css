@@ -19,7 +19,6 @@ body {
     padding: 0;
 }
 
-/* 科技感装饰元素 */
 .tech-grid {
     position: fixed;
     top: 0;
@@ -52,7 +51,6 @@ body {
     100% { opacity: 0.7; }
 }
 
-/* 左侧项目列表 */
 #project-sidebar {
     background: var(--dark-bg);
     width: 250px;
@@ -62,6 +60,9 @@ body {
     transition: all 0.3s ease;
     z-index: 100;
     overflow-y: auto;
+    position: fixed;
+    left: 0;
+    top: 0;
 }
 
 #project-sidebar.collapsed {
@@ -99,15 +100,7 @@ body {
     border-left: 3px solid var(--neon-blue);
 }
 
-#project-sidebar {
-    /* 添加固定定位 */
-    position: fixed;
-    left: 0;
-    top: 0;
-}
-
 #main-content {
-    /* 使用margin-left代替padding-left */
     margin-left: 250px;
     width: calc(100% - 250px);
     transition: margin-left 0.3s ease;
@@ -118,7 +111,6 @@ body {
     width: calc(100% - 50px);
 }
 
-/* 主标题区域 */
 .main-header {
     background: var(--dark-bg);
     border-bottom: 1px solid var(--border-color);
@@ -140,40 +132,32 @@ body {
     text-shadow: 0 0 10px rgba(76, 201, 240, 0.3);
 }
 
-/* 主体三列布局 */
 .dashboard-container {
     display: flex;
-    flex: 1;
-    padding: 10px;
+    height: calc(100vh - 50px);
     gap: 10px;
+    padding: 10px;
     overflow: hidden;
+    flex-wrap: nowrap;
 }
 
 .dashboard-column {
     display: flex;
     flex-direction: column;
     height: 100%;
+    min-width: 0;
 }
 
-/* 左侧列 */
-.left-column {
+.left-column, .right-column {
     flex: 1;
     min-width: 280px;
 }
 
-/* 中间列 */
 .middle-column {
     flex: 1.5;
     min-width: 400px;
 }
 
-/* 右侧列 */
-.right-column {
-    flex: 1;
-    min-width: 280px;
-}
-
-/* 通用卡片样式 */
 .dashboard-card {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
@@ -183,6 +167,19 @@ body {
     overflow: hidden;
     transition: all 0.3s ease;
     backdrop-filter: blur(5px);
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* 修改病害概况卡片的高度 */
+.right-column .dashboard-card:first-child {
+    flex: 1.5; /* 增加高度比例 */
+}
+
+/* 修改病害高发区域卡片的高度 */
+.right-column .dashboard-card:last-child {
+    flex: 1; /* 减少高度比例 */
 }
 
 .dashboard-card:hover {
@@ -206,9 +203,12 @@ body {
 
 .card-body {
     padding: 10px;
+    flex: 1;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
-/* 项目信息样式 */
 .info-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -234,34 +234,13 @@ body {
     color: #e2e8f0;
 }
 
-/* 病害分布图 */
 .distribution-container {
-    display: flex;
-    height: 100%;
-}
-
-.chart-container {
-    flex: 1;
-    display: flex;
+    justify-content: left;
     align-items: center;
-    justify-content: center;
-    height: 150px; /* 固定高度 */
+    height: 100%;
+    width: 50%;
 }
 
-.distribution-list {
-    flex: 1;
-    padding: 5px;
-    font-size: 0.85rem;
-}
-
-.distribution-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 6px 0;
-    border-bottom: 1px solid rgba(64, 158, 255, 0.1);
-}
-
-/* 中间图片区域 */
 .defect-image-container {
     height: 55%;
     display: flex;
@@ -282,42 +261,61 @@ body {
 
 .defect-records {
     height: 45%;
-    overflow-y: auto;
     padding: 10px;
+    display: flex;
+    flex-direction: column;
 }
 
-.defect-records h6 {
-    font-size: 0.95rem;
-    margin-bottom: 8px;
-    padding-bottom: 5px;
+.records-header {
+    display: flex;
+    background: rgba(15, 23, 42, 0.5);
+    padding: 5px 8px;
+    font-size: 0.8rem;
     border-bottom: 1px solid var(--border-color);
 }
 
+.records-header div {
+    flex: 1;
+    text-align: left;
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 5px;
+}
+
+.records-container {
+    overflow-y: auto;
+    flex: 1;
+}
+
 .record-item {
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    margin-bottom: 8px;
-    background: rgba(15, 23, 42, 0.4);
-    font-size: 0.85rem;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    padding: 8px;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.2s;
 }
 
 .record-item > div {
-    display: flex;
-    align-items: center;
+    flex: 1;
+    text-align: left;
+    padding: 0 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.record-item i {
-    margin-right: 5px;
-    color: #4cc9f0;
-    width: 16px;
-    text-align: center;
+.record-item:hover {
+    background: rgba(30, 64, 128, 0.3);
 }
 
-/* 右侧病害概况 */
+.record-item.active {
+    background: rgba(30, 64, 128, 0.6);
+    border-left: 3px solid var(--neon-blue);
+}
+
 .defect-type-item {
     padding: 8px;
     border: 1px solid var(--border-color);
@@ -347,7 +345,6 @@ body {
     font-size: 0.8rem;
 }
 
-/* 高发区域图表 */
 .bar-chart-container {
     height: 100%;
     padding: 10px;
@@ -372,7 +369,6 @@ body {
     background: rgba(64, 158, 255, 0.2);
 }
 
-/* 自定义滚动条 */
 ::-webkit-scrollbar {
     width: 6px;
 }
